@@ -4,6 +4,20 @@ const ctx = canvas.getContext("2d");
 // Game variables
 let gameOver = false;
 
+function checkGameOver() {
+  enemies.forEach(enemy => {
+    if (
+      dataBot.x < enemy.x + enemy.size &&
+      dataBot.x + dataBot.size > enemy.x &&
+      dataBot.y < enemy.y + enemy.size &&
+      dataBot.y + dataBot.size > enemy.y
+    ) {
+      gameOver = true;
+      console.log("Game Over!");
+    }
+  });
+}
+
 // Game loop
 function gameLoop() {
   if (gameOver) return;
@@ -19,6 +33,8 @@ function gameLoop() {
     enemy.draw(ctx);
     enemy.chase(dataBot); // Make the enemy chase DataBot
   });
+
+  checkGameOver(); // Check for game over
 
   requestAnimationFrame(gameLoop);
 }
@@ -97,7 +113,7 @@ class Enemy {
 }
 
 // DATABOT OBJECT
-const dataBot = new DataBot(250, 250, 20, "blue", 5);
+const dataBot = new DataBot(50, 50, 20, "blue", 5);
 
 // MOVING DATABOT
 document.addEventListener("keydown", (e) => {
