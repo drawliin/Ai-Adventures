@@ -15,6 +15,11 @@ function gameLoop() {
   dataPoints.forEach(point => point.draw(ctx));
   dataBot.collectData(dataPoints); // Check for collisions
 
+  enemies.forEach(enemy => {
+    enemy.draw(ctx);
+    enemy.chase(dataBot); // Make the enemy chase DataBot
+  });
+
   requestAnimationFrame(gameLoop);
 }
 
@@ -67,8 +72,32 @@ class DataPoint {
       ctx.fillRect(this.x, this.y, this.size, this.size);
     }
   }
+
+// ENEMY CLASS
+class Enemy {
+  constructor(x, y, size, color, speed) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    this.color = color;
+    this.speed = speed;
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = this.color;
+    ctx.fillRect(this.x, this.y, this.size, this.size);
+  }
+
+  chase(player) {
+    if (this.x < player.x) this.x += this.speed;
+    if (this.x > player.x) this.x -= this.speed;
+    if (this.y < player.y) this.y += this.speed;
+    if (this.y > player.y) this.y -= this.speed;
+  }
+}
+
 // DATABOT OBJECT
-const dataBot = new DataBot(250, 250, 20, "red", 5);
+const dataBot = new DataBot(250, 250, 20, "blue", 5);
 
 // MOVING DATABOT
 document.addEventListener("keydown", (e) => {
@@ -84,6 +113,12 @@ const dataPoints = [
   new DataPoint(300, 300, 10, "green"),
   new DataPoint(500, 200, 10, "green"),
   new DataPoint(100, 400, 10, "green")
+];
+
+// CREATING ENEMIES
+const enemies = [
+  new Enemy(200, 200, 20, "red", 1),
+  new Enemy(600, 400, 20, "red", 1)
 ];
 
 
