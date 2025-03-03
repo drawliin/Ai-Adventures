@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Tutorial</title>
+  <link rel="stylesheet" href="/styles/tutorial.css">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/assets/favicon/site.webmanifest">
+
+</head>
+<body>
+  <div class="game-container">
+    <div class="game-area">
+        <canvas id="gameCanvas" width="600" height="500"></canvas>
+    </div>
+    
+    <div class="info-panel">
+        <h1>AI Adventures</h1>
+        
+        <div class="score-display">
+            Score: <span id="score">0</span>
+        </div>
+        
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <p id="current-task">Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.</p>
+        </div>
+        
+        <div class="learning-rewards">
+            <h2>Apprentissage</h2>
+            <p id="learning-concept">Dans ce niveau, vous découvrez l'apprentissage supervisé. Les données sont toujours étiquetées!</p>
+            <div id="rewards">
+                <p>Badges débloqués: 0/5</p>
+            </div>
+        </div>
+    </div>
+  </div>
+  <script type="module" src="/scripts/tutorial.js"></script>
+</body>
+</html>

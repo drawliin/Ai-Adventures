@@ -1,0 +1,88 @@
+/* Global CSS */
+@import url('https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --black-color: #15202B;
+    --pink-color: #FF5994;
+    --orange-color: #FF9668;
+    --yellow-color: #EDFF8F;
+    --green-color: #84FF9F;
+    --blue-color: #82B6FF;
+}
+
+body {
+    font-family: 'Luckiest Guy', sans-serif;
+    letter-spacing: 2px;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    background: linear-gradient(45deg, var(--green-color), var(--blue-color));
+}
+
+
+/* Tutorial CSS */
+body {
+    padding: 20px;
+    background-color: var(--yellow-color);
+    display: flex;
+    justify-content: center;
+}
+
+.game-container {
+    display: flex;
+    max-width: 1200px;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0,0,0,0.2);
+}
+
+.game-area {
+    flex: 2;
+    background-color: white;
+    padding: 10px;
+    position: relative;
+}
+
+#gameCanvas {
+    background-color: black;
+    display: block;
+    border-radius: 8px;
+}
+
+.info-panel {
+    background-color: var(--green-color);
+    padding: 20px;
+    color: #333;
+}
+
+h1, h2 {
+    color: var(--black-color);
+}
+
+.score-display {
+    font-size: 24px;
+    margin-bottom: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.instructions {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.learning-rewards {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+}
