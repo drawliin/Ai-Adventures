@@ -1,4 +1,4 @@
-import {player, cellSize, movePlayer, drawMaze} from "../utils/script.js";
+import {cellSize, movePlayer, drawMaze, drawPlayer} from "../utils/script.js";
 
 // Config
 const canvas = document.getElementById('gameCanvas');
@@ -48,13 +48,7 @@ function drawDataPoints() {
     });
 }
 
-function drawPlayer() {
-    ctx.beginPath();
-    ctx.arc(player.x + cellSize/2, player.y + cellSize/2, player.width/2, 0, Math.PI * 2);
-    ctx.fillStyle = player.color;
-    ctx.fill();
-    ctx.closePath();
-}
+
 
 // My onColision Function
 function onCollision(){
@@ -77,7 +71,7 @@ function gameLoop() {
     
     drawMaze(ctx, tutorialMaze);
     drawDataPoints();
-    drawPlayer();
+    drawPlayer(ctx);
     
     requestAnimationFrame(gameLoop);
 }

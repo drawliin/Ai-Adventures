@@ -1,7 +1,7 @@
 
 export const cellSize = 30;
 
-// dataBot Position
+// DataBot Position
 export const player = {
     x: cellSize,
     y: cellSize,
@@ -10,6 +10,15 @@ export const player = {
     speed: 3,
     color: '#FF5994'
 };
+
+// DRAW PLAYER
+export function drawPlayer(ctx) {
+    ctx.beginPath();
+    ctx.arc(player.x + cellSize/2, player.y + cellSize/2, player.width/2, 0, Math.PI * 2);
+    ctx.fillStyle = player.color;
+    ctx.fill();
+    ctx.closePath();
+}
 
 // draw maze
 export function drawMaze(ctx, maze) {
