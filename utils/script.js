@@ -16,7 +16,7 @@ export function drawMaze(ctx, maze) {
     for (let y = 0; y < maze.length; y++) {
         for (let x = 0; x < maze[y].length; x++) {
             if (maze[y][x] === 1) {
-                ctx.fillStyle = '#4bc0c0';
+                ctx.fillStyle = '#6DD3FF';
                 ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
             }
         }

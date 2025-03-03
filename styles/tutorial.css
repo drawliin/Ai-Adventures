@@ -12,7 +12,7 @@
     --pink-color: #FF5994;
     --orange-color: #FF9668;
     --yellow-color: #EDFF8F;
-    --green-color: #84FF9F;
+    --green-color: #00FFFF;
     --blue-color: #82B6FF;
 }
 
@@ -50,7 +50,7 @@ body {
 }
 
 #gameCanvas {
-    background-color: black;
+    background-color: #483248;
     display: block;
     border-radius: 8px;
 }
