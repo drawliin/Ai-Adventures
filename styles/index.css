@@ -27,13 +27,12 @@ body {
     background: linear-gradient(45deg, var(--green-color), var(--blue-color));
 }
 h1 {
-    font-size: 1.9rem;
+    font-size: 1.6rem;
     margin-bottom: 1rem;
-    letter-spacing: 2px;
 }
 .btn {
     font-size: 1.5rem;
-    padding: 1rem 1.5rem;
+    padding: 1.5rem 1.5rem;
     background-color: #007bff;
     color: white;
     text-decoration: none;

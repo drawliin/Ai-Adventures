@@ -5,7 +5,6 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 let score = 0;
 
-
 // Labyrinthe (0 = Path, 1 = Wall)
 const tutorialMaze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -26,6 +25,8 @@ const tutorialMaze = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
+canvas.width = tutorialMaze[0].length * cellSize;
+canvas.height = tutorialMaze.length * cellSize;
 
 // Données à collecter
 let dataPoints = [
@@ -48,8 +49,6 @@ function drawDataPoints() {
     });
 }
 
-
-
 // My onColision Function
 function onCollision(){
     score += 10;
@@ -61,8 +60,6 @@ function onCollision(){
             "Félicitations! Vous avez collecté toutes les données. Niveau suivant: Apprentissage supervisé.";
     }
 }
-
-
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -77,3 +74,4 @@ function gameLoop() {
 }
 
 gameLoop();
+
