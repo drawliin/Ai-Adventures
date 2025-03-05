@@ -1,4 +1,4 @@
-export const cellSize = 35;
+export const cellSize = 32;
 
 // Player Spritesheet
 const spriteSheet = new Image();
@@ -12,8 +12,8 @@ spriteSheet.onload = () => {
 export const player = {
     x: cellSize, // Increased starting position to ensure it's not on a wall
     y: cellSize,
-    width: 32, // Match sprite size
-    height: 32,
+    hitboxWidth: 20, // Smaller than sprite width
+    hitboxHeight: 26, // Smaller than sprite height
     speed: 3, // Slightly increased speed
     frameX: 0,
     frameY: 0,
@@ -23,7 +23,7 @@ export const player = {
 };
 
 // Keyboard State
-export const keys = {
+const keys = {
     ArrowUp: false,
     ArrowDown: false,
     ArrowLeft: false,
@@ -71,16 +71,24 @@ window.addEventListener("keyup", (event) => {
 
 // Wall Collision Check
 function checkWallCollision(x, y, maze) {
-    const spriteSize = 32;
+    const scale = 1.1; // Scaling factor for the player sprite
+    const hitboxWidth = player.hitboxWidth;  // Use player hitbox width
+    const hitboxHeight = player.hitboxHeight; // Use player hitbox height
+
+    // Calculate the scaled hitbox dimensions
+    const hitboxWidthScaled = hitboxWidth * scale;
+    const hitboxHeightScaled = hitboxHeight * scale;
+
+    // Calculate grid positions based on the player position and hitbox size
     const gridX = Math.floor(x / cellSize);
     const gridY = Math.floor(y / cellSize);
 
-    // Check all four corners of the player
+    // Check all four corners of the hitbox
     const points = [
-        { x: gridX, y: gridY },
-        { x: Math.floor((x + spriteSize - 1) / cellSize), y: gridY },
-        { x: gridX, y: Math.floor((y + spriteSize - 1) / cellSize) },
-        { x: Math.floor((x + spriteSize - 1) / cellSize), y: Math.floor((y + spriteSize - 1) / cellSize) }
+        { x: gridX, y: gridY }, // Top-left
+        { x: Math.floor((x + hitboxWidthScaled - 1) / cellSize), y: gridY }, // Top-right
+        { x: gridX, y: Math.floor((y + hitboxHeightScaled - 1) / cellSize) }, // Bottom-left
+        { x: Math.floor((x + hitboxWidthScaled - 1) / cellSize), y: Math.floor((y + hitboxHeightScaled - 1) / cellSize) } // Bottom-right
     ];
 
     for (let point of points) {
@@ -88,15 +96,16 @@ function checkWallCollision(x, y, maze) {
         if (point.x < 0 || point.x >= maze[0].length || 
             point.y < 0 || point.y >= maze.length) {
             console.log("Out of bounds collision:", point);
-            return true; // Treat out-of-bounds as wall
+            return true; // Treat out-of-bounds as wall collision
         }
 
+        // Check if the point collides with a wall
         if (maze[point.y][point.x] === 1) {
             console.log("Wall collision detected at:", point);
             return true;
         }
     }
-    return false;
+    return false; // No collision detected
 }
 
 // Move Player
@@ -164,25 +173,32 @@ export function movePlayer(maze, objects, onCollision) {
 export function drawPlayer(ctx) {
     if (!spriteLoaded) return;
 
-    const spriteSize = 32; // Each sprite is 24x24 in the sheet
-    const scale = 1; // Adjust scale as needed
+    const spriteSize = 32; // Original sprite crop size
+    const scale = 1.1;     // Scale for drawing the sprite
+    const displaySize = spriteSize * scale; // Final drawn size of sprite
 
-    const displaySize = spriteSize * scale; // Scaled size
+    // Calculate scaled hitbox dimensions
+    const hitboxWidthScaled = player.hitboxWidth * scale;
+    const hitboxHeightScaled = player.hitboxHeight * scale;
+    // Center the hitbox inside the sprite's drawn area
+    const offsetX = (displaySize - hitboxWidthScaled) / 2;
+    const offsetY = (displaySize - hitboxHeightScaled) / 2;
 
-    // Draw a semi-transparent background box behind the player
-    ctx.fillStyle = "rgba(255, 0, 0, 0.3)"; // Red with transparency
-    ctx.fillRect(player.x, player.y, displaySize, displaySize);
+    // Draw background rectangle for the hitbox (for debugging/visualization)
+    ctx.fillStyle = "rgba(255, 0, 0, 0.3)"; // A semi-transparent red
+    ctx.fillRect(player.x + offsetX, player.y + offsetY, hitboxWidthScaled, hitboxHeightScaled);
 
+    // Draw the player sprite on top
     ctx.drawImage(
         spriteSheet,
-        player.frameX * spriteSize, // Crop X
-        player.frameY * spriteSize, // Crop Y
-        spriteSize, 
-        spriteSize, // Crop size
-        player.x, 
-        player.y, // Position on canvas
-        spriteSize * scale, 
-        spriteSize * scale // Scale it up
+        player.frameX * spriteSize,
+        player.frameY * spriteSize,
+        spriteSize,
+        spriteSize,
+        player.x,
+        player.y,
+        displaySize,
+        displaySize
     );
 }
 
