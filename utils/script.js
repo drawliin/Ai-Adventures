@@ -1,4 +1,5 @@
-export const cellSize = 32;
+export const cellSize = 30;
+const scale = 1;
 
 // Player Spritesheet
 const spriteSheet = new Image();
@@ -10,10 +11,10 @@ spriteSheet.onload = () => {
 
 // Player Properties
 export const player = {
-    x: cellSize, // Increased starting position to ensure it's not on a wall
+    x: cellSize, 
     y: cellSize,
-    hitboxWidth: 20, // Smaller than sprite width
-    hitboxHeight: 26, // Smaller than sprite height
+    hitboxWidth: 18, // Smaller than sprite width
+    hitboxHeight: 20, // Smaller than sprite height
     speed: 3, // Slightly increased speed
     frameX: 0,
     frameY: 0,
@@ -71,7 +72,6 @@ window.addEventListener("keyup", (event) => {
 
 // Wall Collision Check
 function checkWallCollision(x, y, maze) {
-    const scale = 1.1; // Scaling factor for the player sprite
     const hitboxWidth = player.hitboxWidth;  // Use player hitbox width
     const hitboxHeight = player.hitboxHeight; // Use player hitbox height
 
@@ -96,7 +96,7 @@ function checkWallCollision(x, y, maze) {
         if (point.x < 0 || point.x >= maze[0].length || 
             point.y < 0 || point.y >= maze.length) {
             console.log("Out of bounds collision:", point);
-            return true; // Treat out-of-bounds as wall collision
+            return true; 
         }
 
         // Check if the point collides with a wall
@@ -119,25 +119,21 @@ export function movePlayer(maze, objects, onCollision) {
         newY -= player.speed;
         player.frameY = 2; // Up animation row
         isMoving = true;
-        console.log("Attempting to move UP");
     }
     if (keys.ArrowDown) {
         newY += player.speed;
         player.frameY = 0; // Down animation row
         isMoving = true;
-        console.log("Attempting to move DOWN");
     }
     if (keys.ArrowLeft) {
         newX -= player.speed;
         player.frameY = 3; // Left animation row
         isMoving = true;
-        console.log("Attempting to move LEFT");
     }
     if (keys.ArrowRight) {
         newX += player.speed;
         player.frameY = 1; // Right animation row
         isMoving = true;
-        console.log("Attempting to move RIGHT");
     }
 
     // Check wall collisions separately for X and Y
@@ -147,11 +143,9 @@ export function movePlayer(maze, objects, onCollision) {
     // Update position if movement is allowed
     if (canMoveX) {
         player.x = newX;
-        console.log("X movement allowed");
     }
     if (canMoveY) {
         player.y = newY;
-        console.log("Y movement allowed");
     }
 
     // Handle animation
@@ -174,19 +168,16 @@ export function drawPlayer(ctx) {
     if (!spriteLoaded) return;
 
     const spriteSize = 32; // Original sprite crop size
-    const scale = 1.1;     // Scale for drawing the sprite
     const displaySize = spriteSize * scale; // Final drawn size of sprite
 
     // Calculate scaled hitbox dimensions
     const hitboxWidthScaled = player.hitboxWidth * scale;
     const hitboxHeightScaled = player.hitboxHeight * scale;
-    // Center the hitbox inside the sprite's drawn area
-    const offsetX = (displaySize - hitboxWidthScaled) / 2;
-    const offsetY = (displaySize - hitboxHeightScaled) / 2;
+
 
     // Draw background rectangle for the hitbox (for debugging/visualization)
     ctx.fillStyle = "rgba(255, 0, 0, 0.3)"; // A semi-transparent red
-    ctx.fillRect(player.x + offsetX, player.y + offsetY, hitboxWidthScaled, hitboxHeightScaled);
+    ctx.fillRect(player.x , player.y , hitboxWidthScaled, hitboxHeightScaled);
 
     // Draw the player sprite on top
     ctx.drawImage(
@@ -195,8 +186,8 @@ export function drawPlayer(ctx) {
         player.frameY * spriteSize,
         spriteSize,
         spriteSize,
-        player.x,
-        player.y,
+        player.x - Math.ceil(player.hitboxWidth / 2),
+        player.y - Math.ceil(player.hitboxHeight / 2),
         displaySize,
         displaySize
     );
