@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Tutorial</title>
-  <link rel="stylesheet" href="/styles/tutorial.css">
+  <link rel="stylesheet" href="/styles/ApprentissageNonSupervise.css">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
@@ -16,6 +16,7 @@
   <div class="game-container">
     <div class="game-area">
         <canvas id="gameCanvas"></canvas>
+        <div id="collected-shapes"></div>
     </div>
     
     <div class="info-panel">
@@ -30,17 +31,23 @@
             <p id="current-task">Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.</p>
         </div>
         
-        <div class="learning-rewards">
-            <h2>Apprentissage</h2>
-            <p id="learning-concept">Dans ce niveau, vous découvrez l'apprentissage supervisé. Les données sont toujours étiquetées!</p>
-            <div id="rewards">
-                <p>Badges débloqués: 0/5</p>
-            </div>
+        <div id="sorting-options">
+            <label>
+                <input type="radio" name="sort-type" value="shape" checked> trier par forme
+            </label>
+            <label>
+                <input type="radio" name="sort-type" value="color"> trier par couleur
+            </label>
         </div>
-        <button id="nextButton">Suivant</button>
+        <div id="baskets" style="display: flex; justify-content: space-around;">
+            <div id="basket-circle" class="basket"></div>
+            <div id="basket-square" class="basket"></div>
+            <div id="basket-triangle" class="basket"></div>
+            <div id="basket-star" class="basket"></div>
+        </div>
     </div>
   </div>
   
-  <script type="module" src="/scripts/tutorial.js"></script>
+  <script type="module" src="/scripts/ApprentissageNonSupervise.js"></script>
 </body>
 </html>

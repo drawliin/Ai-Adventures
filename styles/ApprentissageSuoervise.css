@@ -100,6 +100,81 @@ h1, h2 {
     transition: background-color 0.3s ease;
 }
 
-#nextButton:hover {
+#collected-shapes {
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 8px;
+}
+
+.shape {
+    width: 50px;
+    height: 50px;
+    margin: 0 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.shape.circle {
+    border-radius: 50%;
+}
+
+.shape.square {
+    border-radius: 0;
+}
+
+.shape.triangle {
+    width: 0;
+    height: 0;
+    border-left: 25px solid transparent;
+    border-right: 25px solid transparent;
+    border-bottom: 50px solid;
+    background: none;
+}
+
+.shape.star {
+    clip-path: polygon(
+        50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 
+        50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%
+    );
+}
+
+#basket {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    border: 2px dashed var(--black-color);
+    padding: 10px;
+    min-height: 60px;
+}
+
+.basket {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    border: 2px dashed var(--black-color);
+    padding: 10px;
+    min-height: 60px;
+    flex: 1;
+}
+
+button {
+    display: block;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: white;
+    background-color: var(--pink-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+button:hover {
     background-color: var(--orange-color);
 }

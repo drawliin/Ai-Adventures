@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Tutorial</title>
-  <link rel="stylesheet" href="/styles/tutorial.css">
+  <link rel="stylesheet" href="/styles/ApprentissageSuoervise.css">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
@@ -16,6 +16,7 @@
   <div class="game-container">
     <div class="game-area">
         <canvas id="gameCanvas"></canvas>
+        <div id="collected-shapes"></div>
     </div>
     
     <div class="info-panel">
@@ -30,17 +31,11 @@
             <p id="current-task">Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.</p>
         </div>
         
-        <div class="learning-rewards">
-            <h2>Apprentissage</h2>
-            <p id="learning-concept">Dans ce niveau, vous découvrez l'apprentissage supervisé. Les données sont toujours étiquetées!</p>
-            <div id="rewards">
-                <p>Badges débloqués: 0/5</p>
-            </div>
-        </div>
-        <button id="nextButton">Suivant</button>
+        <div id="basket" class="basket"></div>
+        <button>suivant</button>
     </div>
   </div>
   
-  <script type="module" src="/scripts/tutorial.js"></script>
+  <script type="module" src="/scripts/ApprentissageSupervise.js"></script>
 </body>
 </html>
