@@ -1,5 +1,5 @@
 export const cellSize = 30;
-const scale = 1;
+const scale = 1.2;
 
 // Player Spritesheet
 const spriteSheet = new Image();
