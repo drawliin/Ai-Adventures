@@ -1,11 +1,9 @@
-
 export const MovingDirection = {
     up: 0,
     down: 1,
     left: 2,
     right: 3
 };
-
 
 export const cellSize = 30;
 const scale = 1.2;
@@ -40,7 +38,7 @@ const keys = {
     ArrowRight: false
 };
 
-// Detailed event listeners with logging
+// Event listeners for keyboard input
 window.addEventListener("keydown", (event) => {
     switch(event.key) {
         case "ArrowUp":
@@ -183,7 +181,6 @@ export function drawPlayer(ctx) {
     const hitboxWidthScaled = player.hitboxWidth * scale;
     const hitboxHeightScaled = player.hitboxHeight * scale;
 
-
     // Draw background rectangle for the hitbox (for debugging/visualization)
     ctx.fillStyle = "rgba(255, 0, 0, 0.3)"; // A semi-transparent red
     ctx.fillRect(player.x , player.y , hitboxWidthScaled, hitboxHeightScaled);
@@ -202,6 +199,7 @@ export function drawPlayer(ctx) {
     );
 }
 
+let dataSound = new Audio("../assets/sounds/waka.wav");
 // Data Collision
 export function checkDataCollision(objects, onCollision) {
     objects.forEach(obj => {
@@ -212,6 +210,8 @@ export function checkDataCollision(objects, onCollision) {
 
             if (distance < cellSize / 2) {
                 obj.collected = true;
+                dataSound.play();
+
                 onCollision();
             }
         }
@@ -228,4 +228,118 @@ export function drawMaze(ctx, maze) {
             }
         }
     }
+}
+
+// Enemy Functions
+export function createEnemy(x, y) {
+    return {
+        x: x,
+        y: y,
+        speed: 2,
+        movingDirection: Math.floor(Math.random() * Object.keys(MovingDirection).length),
+        directionTimerDefault: random(100, 300),
+        directionTimer: random(100, 300),
+        image: loadImage("../assets/images/ghost.png")
+    };
+}
+
+function loadImage(src) {
+    const image = new Image();
+    image.src = src;
+    return image;
+}
+
+function random(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+export function moveEnemy(enemy, maze) {
+    if (didCollideWithEnvironment(enemy, maze, enemy.movingDirection)) {
+        changeDirection(enemy, maze);
+    } else {
+        switch (enemy.movingDirection) {
+            case MovingDirection.up:
+                enemy.y -= enemy.speed;
+                break;
+            case MovingDirection.down:
+                enemy.y += enemy.speed;
+                break;
+            case MovingDirection.left:
+                enemy.x -= enemy.speed;
+                break;
+            case MovingDirection.right:
+                enemy.x += enemy.speed;
+                break;
+        }
+    }
+}
+
+export function changeDirection(enemy, maze) {
+    enemy.directionTimer--;
+    let newMoveDirection = null;
+    if (enemy.directionTimer === 0) {
+        enemy.directionTimer = enemy.directionTimerDefault;
+    
+        let validDirectionFound = false;
+        let attempts = 0;
+    
+        while (!validDirectionFound && attempts < 10) {
+            newMoveDirection = Math.floor(Math.random() * Object.keys(MovingDirection).length);
+            if (!didCollideWithEnvironment(enemy, maze, newMoveDirection)) {
+                validDirectionFound = true;
+                enemy.movingDirection = newMoveDirection;
+            }
+            attempts++;
+        }
+    }
+
+    if (newMoveDirection != null && enemy.movingDirection != newMoveDirection) {
+        if (Number.isInteger(enemy.x / cellSize) && Number.isInteger(enemy.y / cellSize)) {
+            if (!didCollideWithEnvironment(enemy, maze, newMoveDirection)) {
+                enemy.movingDirection = newMoveDirection;
+            }
+        }
+    }
+}
+
+export function drawEnemy(ctx, enemy) {
+    ctx.fillStyle = "black"; // Change color if needed
+    ctx.fillRect(enemy.x, enemy.y, cellSize, cellSize); // Draw background
+    ctx.drawImage(enemy.image, enemy.x, enemy.y, cellSize, cellSize);
+}
+
+function didCollideWithEnvironment(enemy, maze, direction = enemy.movingDirection) {
+    let newX = enemy.x;
+    let newY = enemy.y;
+
+    switch (direction) {
+        case MovingDirection.up:
+            newY -= enemy.speed;
+            break;
+        case MovingDirection.down:
+            newY += enemy.speed;
+            break;
+        case MovingDirection.left:
+            newX -= enemy.speed;
+            break;
+        case MovingDirection.right:
+            newX += enemy.speed;
+            break;
+    }
+
+    const hitboxSize = cellSize * 0.8; // Adjust for a smaller hitbox
+    const points = [
+        { x: Math.floor(newX / cellSize), y: Math.floor(newY / cellSize) }, // Top-left
+        { x: Math.floor((newX + hitboxSize) / cellSize), y: Math.floor(newY / cellSize) }, // Top-right
+        { x: Math.floor(newX / cellSize), y: Math.floor((newY + hitboxSize) / cellSize) }, // Bottom-left
+        { x: Math.floor((newX + hitboxSize) / cellSize), y: Math.floor((newY + hitboxSize) / cellSize) } // Bottom-right
+    ];
+
+    for (let point of points) {
+        if (point.x < 0 || point.x >= maze[0].length || point.y < 0 || point.y >= maze.length || maze[point.y][point.x] === 1) {
+            return true; // Collision detected
+        }
+    }
+
+    return false; // No collision
 }

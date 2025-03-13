@@ -1,4 +1,6 @@
-import {cellSize, movePlayer, drawMaze, drawPlayer} from "../utils/script.js";
+import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player} from "../utils/script.js";
+
+let gameWinSound = new Audio('../assets/sounds/gameWin.wav');
 
 // Config
 const canvas = document.getElementById('gameCanvas');
@@ -21,7 +23,7 @@ const tutorialMaze = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
@@ -36,6 +38,11 @@ let dataPoints = [
     { x: 17 * cellSize, y: 15 * cellSize, collected: false, type: 'data', color: '#ffcd56' }
 ];
 
+// Create Enemies
+let enemies = [
+    createEnemy(5 * cellSize, 5 * cellSize),
+    createEnemy(13 * cellSize, 12 * cellSize)
+];
 
 function drawDataPoints() {
     dataPoints.forEach(point => {
@@ -56,15 +63,42 @@ function onCollision(){
     // Vérifier si toutes les données sont collectées
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
+        
         document.getElementById('current-task').textContent = 
             "Félicitations! Vous avez collecté toutes les données. Niveau suivant: Apprentissage supervisé.";
+            gameWinSound.play();
+            alert("You won!");
+        
     }
 }
+
+function checkPlayerEnemyCollision(player, enemies) {
+    enemies.forEach(enemy => {
+        if (Math.abs(player.x - enemy.x) < cellSize / 2 && Math.abs(player.y - enemy.y) < cellSize / 2 && !gameOver) {
+            gameOver = true;
+            gameOverSound.play();
+            alert("Game Over!");
+            document.location.reload();
+        }
+    });
+}
+
+
+let gameOver = false; 
+let gameOverSound = new Audio("../assets/sounds/gameOver.wav");
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
     movePlayer(tutorialMaze, dataPoints, onCollision);
+
+    enemies.forEach(enemy => {
+        drawEnemy(ctx, enemy);
+        changeDirection(enemy, tutorialMaze);
+        moveEnemy(enemy, tutorialMaze);
+    });
+
+    checkPlayerEnemyCollision(player, enemies);
     
     drawMaze(ctx, tutorialMaze);
     drawDataPoints();
@@ -74,4 +108,5 @@ function gameLoop() {
 }
 
 gameLoop();
+
 
