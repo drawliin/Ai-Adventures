@@ -6,37 +6,37 @@ const ctx = canvas.getContext('2d');
 let score = 0;
 
 // Labyrinthe (0 = Path, 1 = Wall)
-const tutorialMaze = [
+const maze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
+    [1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1],
+    [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1],
+    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+    [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 0, 1],
+    [1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 1],
+    [1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1],
+    [1, 0, 1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
+    [1, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1],
+    [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
+    [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
+    [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
-    [1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
-    [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
-    [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
-canvas.width = tutorialMaze[0].length * cellSize;
-canvas.height = tutorialMaze.length * cellSize;
+canvas.width = maze[0].length * cellSize;
+canvas.height = maze.length * cellSize;
 
 // Données à collecter
 let dataPoints = [
     { x: 3 * cellSize, y: 5 * cellSize, collected: false, type: 'circle', color: '#ffcd56' }, // Yellow
-    { x: 8 * cellSize, y: 3 * cellSize, collected: false, type: 'circle', color: '#ff6f61' }, // Red
-    { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
-    { x: 12 * cellSize, y: 5 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
-    { x: 16 * cellSize, y: 1 * cellSize, collected: false, type: 'triangle', color: '#ffcd56' }, // Yellow
-    { x: 13 * cellSize, y: 7 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 14 * cellSize, y: 5 * cellSize, collected: false, type: 'star', color: '#9966ff' } // Purple
+    { x: 9 * cellSize, y: 12 * cellSize, collected: false, type: 'circle', color: '#ff6f61' }, // Red
+    { x: 16 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
+    { x: 12 * cellSize, y: 5 * cellSize, collected: false, type: 'triangle', color: '#ffcd56' }, // Yellow
+    { x: 1 * cellSize, y: 15 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
+    { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 18 * cellSize, y: 15 * cellSize, collected: false, type: 'star', color: '#9966ff' } // Purple
 ];
 
 function drawDataPoints() {
@@ -147,8 +147,8 @@ function onCollision(){
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    drawMaze(ctx, tutorialMaze); // Ensure the maze is always drawn
-    movePlayer(tutorialMaze, dataPoints, onCollision);
+    drawMaze(ctx, maze); // Ensure the maze is always drawn
+    movePlayer(maze, dataPoints, onCollision);
     
     drawDataPoints();
     drawPlayer(ctx);

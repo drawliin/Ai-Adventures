@@ -118,6 +118,9 @@ h1, h2 {
     justify-content: center;
     border-radius: 50%;
 }
+.shape:hover {
+    cursor: pointer;
+}
 
 .shape.circle {
     border-radius: 50%;
