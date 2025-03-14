@@ -81,11 +81,7 @@ h1, h2 {
     margin-bottom: 20px;
 }
 
-.learning-rewards {
-    background-color: white;
-    padding: 15px;
-    border-radius: 8px;
-}
+/* Removed learning-rewards CSS rules */
 
 #nextButton {
     display: block;
