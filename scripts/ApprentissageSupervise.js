@@ -1,4 +1,6 @@
-import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused} from "../utils/script.js";
+import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused, gameOverSound, gameWinSound} from "../utils/script.js";
+
+// Sounds
 
 // Config
 const canvas = document.getElementById('gameCanvas');
@@ -36,7 +38,7 @@ let enemies = [
 
 // Données à collecter
 let dataPoints = [
-    { x: 2 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
+    { x: 2 * cellSize, y: 13 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
     { x: 1 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ff6f61' }, // Red
     { x: 1 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'square', color: '#9966ff' }, // Purple
     { x: 3 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ffcd56' }, // Yellow
@@ -140,6 +142,7 @@ function addToBasket(point, clickedShape) {
 }
 
 function showWinAnimation(){
+    gameWinSound.play();
     setTimeout(()=>{
         alert("You won!!");
     }, 1000);
@@ -175,6 +178,7 @@ function checkSorting() {
 
 function resetGame() {
     alert("You didn't Sort Correctly");
+    gameOverSound.play();
     setTimeout(()=>{
         score = 0;
         document.getElementById('score').textContent = score;
@@ -225,7 +229,12 @@ function gameLoop() {
             moveEnemy(enemy, maze);
         });
 
-        checkPlayerEnemyCollision(player, enemies);
+        // Check for collisions only if not all data points are collected
+        const allCollected = dataPoints.every(point => point.collected);
+        if (!allCollected) {
+            checkPlayerEnemyCollision(player, enemies);
+        }
+        
         drawDataPoints();
         drawPlayer(ctx);
     }

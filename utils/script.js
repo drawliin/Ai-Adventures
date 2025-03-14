@@ -6,7 +6,8 @@ export const MovingDirection = {
     right: 3
 };
 
-let gameOverSound = new Audio("../assets/sounds/gameOver.wav");
+export let gameOverSound = new Audio("../assets/sounds/gameOver.wav");
+export let gameWinSound = new Audio("../assets/sounds/gameWin.wav");
 
 export const cellSize = 30;
 const scale = 1.2;
@@ -349,7 +350,9 @@ export function checkPlayerEnemyCollision(player, enemies) {
             gameOver = true;
             gameOverSound.play();
             alert("Game Over!");
-            document.location.reload();
+            setTimeout(()=>{
+                document.location.reload();
+            }, 2000);
         }
     });
 }
