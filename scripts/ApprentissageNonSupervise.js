@@ -1,4 +1,144 @@
-import {cellSize, movePlayer, drawMaze, drawPlayer} from "../utils/script.js";
+import { cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused, gameOverSound, gameWinSound } from "../utils/script.js";
+
+const sortingOptions = document.querySelectorAll('input[name="sort-type"]');
+const basketsContainer = document.querySelector('.baskets');
+
+sortingOptions.forEach(option => {
+    option.addEventListener('change', (event) => {
+        const selectedOption = event.target.value; // Get the selected option (shape or color)
+        generateBaskets(selectedOption); // Generate baskets based on the selected option
+    });
+});
+
+function generateBaskets(sortType) {
+    // Clear existing baskets
+    basketsContainer.innerHTML = '';
+
+    if (sortType === 'shape') {
+        // Generate baskets for shapes
+        const shapes = ['circle', 'square', 'triangle', 'star'];
+        shapes.forEach(shape => {
+            const basket = document.createElement('div');
+            basket.classList.add('basket');
+            basket.id = `${shape}-basket`;
+
+            const title = document.createElement('h3');
+            title.textContent = `${shape.charAt(0).toUpperCase() + shape.slice(1)} Basket`;
+            basket.appendChild(title);
+
+            // Add slots for shapes
+            for (let i = 0; i < 2; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('slot');
+                basket.appendChild(slot);
+            }
+
+            basketsContainer.appendChild(basket);
+        });
+    } else if (sortType === 'color') {
+        // Generate baskets for colors
+        const colors = ['#ffcd56', '#ff6f61', '#9966ff', '#4aa8db']; // Yellow, Red, Purple, blue
+        colors.forEach(color => {
+            const basket = document.createElement('div');
+            basket.classList.add('basket');
+            basket.id = `${color.replace('#', '')}-basket`;
+
+            const title = document.createElement('h3');
+            title.textContent = `Color Basket (${color})`;
+            basket.appendChild(title);
+
+            // Add slots for colors
+            for (let i = 0; i < 2; i++) {
+                const slot = document.createElement('div');
+                slot.classList.add('slot');
+                basket.appendChild(slot);
+            }
+
+            basketsContainer.appendChild(basket);
+        });
+    }
+}
+
+function checkSorting() {
+    const baskets = document.querySelectorAll('.basket');
+    let allCorrect = true;
+
+    const sortType = document.querySelector('input[name="sort-type"]:checked').value;
+
+    baskets.forEach(basket => {
+        let expectedType;
+        if (sortType === 'shape') {
+            expectedType = basket.id.replace('-basket', ''); // Get the shape type (circle, square, etc.)
+        } else if (sortType === 'color') {
+            expectedType = `#${basket.id.replace('-basket', '')}`; // Get the color type (e.g., #ffcd56)
+        }
+
+        const slots = basket.querySelectorAll('.slot');
+
+        // Check if all shapes in this basket match the expected type
+        const shapesMatch = Array.from(slots).every(slot => {
+            const shape = slot.querySelector('.shape');
+            if (!shape) return false;
+
+            if (sortType === 'shape') {
+                return shape.classList.contains(expectedType);
+            } else if (sortType === 'color') {
+                return shape.style.backgroundColor === expectedType;
+            }
+        });
+
+        if (!shapesMatch) {
+            allCorrect = false;
+        }
+    });
+
+    // Show result
+    if (allCorrect) {
+        showWinAnimation();
+    } else {
+        resetGame();
+    }
+}
+
+// Initialize baskets with the default sorting option (shape)
+document.addEventListener('DOMContentLoaded', () => {
+    const defaultSortType = document.querySelector('input[name="sort-type"]:checked').value;
+    generateBaskets(defaultSortType);
+});
+
+function showWinAnimation(){
+    const nextButton = document.getElementById('next-button');
+    gameWinSound.play();
+    setTimeout(()=>{
+        alert("Bravoo👏👏.. Passer Vers le niveau suivant!!");
+        nextButton.style.display = 'block'; // Show the button
+    }, 1000);
+}
+
+function resetGame() {
+    alert("You didn't Sort Correctly");
+    gameOverSound.play();
+    setTimeout(()=>{
+        score = 0;
+        document.getElementById('score').textContent = score;
+        document.getElementById('current-task').textContent = 
+            "Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.";
+        dataPoints.forEach(point => {
+            point.collected = false;
+            point.clicked = false;
+        });
+        document.getElementById('collected-shapes').innerHTML = '';
+    
+        // Clear all baskets
+        const baskets = document.querySelectorAll('.basket');
+        baskets.forEach(basket => {
+            const slots = basket.querySelectorAll('.slot');
+            slots.forEach(slot => slot.innerHTML = '');
+        });
+        gameLoop();
+    }, 1000);
+}
+
 
 // Config
 const canvas = document.getElementById('gameCanvas');
@@ -6,7 +146,7 @@ const ctx = canvas.getContext('2d');
 let score = 0;
 
 // Labyrinthe (0 = Path, 1 = Wall)
-const tutorialMaze = [
+const maze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
@@ -25,19 +165,22 @@ const tutorialMaze = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
-canvas.width = tutorialMaze[0].length * cellSize;
-canvas.height = tutorialMaze.length * cellSize;
+canvas.width = maze[0].length * cellSize;
+canvas.height = maze.length * cellSize;
 
 // Données à collecter
 let dataPoints = [
-    { x: 3 * cellSize, y: 5 * cellSize, collected: false, type: 'circle', color: '#ffcd56' }, // Yellow
-    { x: 8 * cellSize, y: 3 * cellSize, collected: false, type: 'circle', color: '#ff6f61' }, // Red
-    { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
-    { x: 12 * cellSize, y: 5 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
-    { x: 16 * cellSize, y: 1 * cellSize, collected: false, type: 'triangle', color: '#ffcd56' }, // Yellow
-    { x: 13 * cellSize, y: 7 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 14 * cellSize, y: 5 * cellSize, collected: false, type: 'star', color: '#9966ff' } // Purple
+    { x: 2 * cellSize, y: 1 * cellSize, collected: false, type: 'circle', color: '#ffcd56' }, // Yellow
+    { x: 3 * cellSize, y: 1 * cellSize, collected: false, type: 'circle', color: '#ff6f61' }, // Red
+    { x: 4 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
+    { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
+    { x: 5 * cellSize, y: 2 * cellSize, collected: false, type: 'triangle', color: '#4aa8db	' }, // blue
+    { x: 5 * cellSize, y: 3 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 4 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#4aa8db	' }, // blue
+    { x: 3 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#9966ff' }, // Purple
 ];
+
+
 
 function drawDataPoints() {
     dataPoints.forEach(point => {
@@ -81,13 +224,13 @@ function displayCollectedShapes() {
     const collectedContainer = document.getElementById('collected-shapes');
     collectedContainer.innerHTML = ''; // Clear previous shapes
     dataPoints.forEach(point => {
-        if (point.collected) {
+        if (point.collected && !point.clicked) {
             const shapeDiv = document.createElement('div');
             shapeDiv.classList.add('shape', point.type);
             shapeDiv.style.backgroundColor = point.color;
             shapeDiv.onclick = () => {
                 if (!shapeDiv.classList.contains('clicked')) {
-                    addToBasket(point);
+                    addToBasket(point, shapeDiv);
                     shapeDiv.classList.add('clicked');
                 }
             };
@@ -96,31 +239,71 @@ function displayCollectedShapes() {
     });
 }
 
-function addToBasket(point) {
-    const basketType = document.querySelector('input[name="sort-type"]:checked').value;
+function addToBasket(point, clickedShape) {
+    // Get the selected sorting option (shape or color)
+    const sortType = document.querySelector('input[name="sort-type"]:checked').value;
+
+    // Determine the basket ID based on the sorting option
     let basketId;
-    if (basketType === 'shape') {
-        basketId = `basket-${point.type}`;
-    } else if (basketType === 'color') {
-        basketId = `basket-${point.color.replace('#', '')}`;
+    if (sortType === 'shape') {
+        basketId = `${point.type}-basket`; // e.g., circle-basket, square-basket
+    } else if (sortType === 'color') {
+        basketId = `${point.color.replace('#', '')}-basket`; // e.g., ffcd56-basket, ff6f61-basket
     }
-    const basketContainer = document.getElementById(basketId);
-    const shapeDiv = document.createElement('div');
-    shapeDiv.classList.add('shape', point.type);
-    shapeDiv.style.backgroundColor = point.color;
-    basketContainer.appendChild(shapeDiv);
 
-    // Check if all shapes are in the correct order
-    const correctOrderShape = ['circle', 'square', 'triangle', 'star'];
-    const correctOrderColor = ['ffcd56', 'ff6f61', '9966ff'];
-    const collectedShapes = Array.from(basketContainer.children).map(div => basketType === 'shape' ? div.classList[1] : div.style.backgroundColor.replace('#', ''));
+    // Find the corresponding basket
+    const basket = document.getElementById(basketId);
+    if (!basket) {
+        console.error(`Basket not found: ${basketId}`);
+        return;
+    }
 
-    if (collectedShapes.length === (basketType === 'shape' ? correctOrderShape.length : correctOrderColor.length)) {
-        if (JSON.stringify(collectedShapes) === JSON.stringify(basketType === 'shape' ? correctOrderShape : correctOrderColor)) {
-            // Removed showWinAnimation call
-        } else {
-            alert("Wrong answer! Try again.");
+    // Find the next available slot in the basket
+    const slots = basket.querySelectorAll('.slot');
+    let added = false;
+
+    for (const slot of slots) {
+        if (slot.children.length === 0) { // Check if the slot is empty
+            const shapeDiv = document.createElement('div');
+            shapeDiv.classList.add('shape', point.type);
+            shapeDiv.style.backgroundColor = point.color;
+            slot.appendChild(shapeDiv);
+            added = true;
+            break;
         }
+    }
+
+    // If no slots are available in the correct basket, find the next available slot in any basket
+    if (!added) {
+        const allBaskets = document.querySelectorAll('.basket');
+        for (const basket of allBaskets) {
+            const slots = basket.querySelectorAll('.slot');
+            for (const slot of slots) {
+                if (slot.children.length === 0) { // Check if the slot is empty
+                    const shapeDiv = document.createElement('div');
+                    shapeDiv.classList.add('shape', point.type);
+                    shapeDiv.style.backgroundColor = point.color;
+                    slot.appendChild(shapeDiv);
+                    added = true;
+                    break;
+                }
+            }
+            if (added) break;
+        }
+    }
+
+    // Mark the specific clicked shape as "clicked"
+    clickedShape.classList.add('clicked');
+
+    // Check if all baskets are full
+    const allBasketsFull = Array.from(document.querySelectorAll('.basket')).every(basket => {
+        const slots = basket.querySelectorAll('.slot');
+        return Array.from(slots).every(slot => slot.children.length > 0);
+    });
+
+    // If all baskets are full, check if shapes are sorted correctly
+    if (allBasketsFull) {
+        checkSorting();
     }
 }
 
@@ -141,8 +324,8 @@ function onCollision(){
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    drawMaze(ctx, tutorialMaze); // Ensure the maze is always drawn
-    movePlayer(tutorialMaze, dataPoints, onCollision);
+    drawMaze(ctx, maze); // Ensure the maze is always drawn
+    movePlayer(maze, dataPoints, onCollision);
     
     drawDataPoints();
     drawPlayer(ctx);

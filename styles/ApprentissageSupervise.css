@@ -87,18 +87,7 @@ h1, h2 {
     border-radius: 8px;
 }
 
-#nextButton {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 18px;
-    color: white;
-    background-color: var(--pink-color);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+
 
 #collected-shapes {
     display: flex;
@@ -179,8 +168,8 @@ h1, h2 {
     cursor: pointer;
 }
 
-button {
-    display: block;
+#next-button {
+    display: none;
     margin: 20px auto;
     padding: 10px 20px;
     font-size: 18px;
@@ -192,6 +181,13 @@ button {
     transition: background-color 0.3s ease;
 }
 
-button:hover {
+#next-button a{
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#next-button:hover {
     background-color: var(--orange-color);
 }

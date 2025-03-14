@@ -36,7 +36,7 @@ body {
 
 .game-container {
     display: flex;
-    max-width: 1200px;
+    max-width: 1400px;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 0 20px rgba(0,0,0,0.2);
@@ -87,22 +87,11 @@ h1, h2 {
     border-radius: 8px;
 }
 
-#nextButton {
-    display: block;
-    margin: 20px auto;
-    padding: 10px 20px;
-    font-size: 18px;
-    color: white;
-    background-color: var(--pink-color);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
 
 
 #collected-shapes {
     display: flex;
+    gap: 10px;
     justify-content: center;
     margin-top: 10px;
     padding: 10px;
@@ -111,13 +100,12 @@ h1, h2 {
 }
 
 .shape {
-    width: 50px;
-    height: 50px;
-    margin: 0 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.shape:hover {
+    cursor: pointer;
 }
 
 .shape.circle {
@@ -131,10 +119,10 @@ h1, h2 {
 .shape.triangle {
     width: 0;
     height: 0;
-    border-left: 25px solid transparent;
-    border-right: 25px solid transparent;
-    border-bottom: 50px solid;
-    background: none;
+    border-left: 15px solid transparent;
+    border-right: 15px solid transparent;
+    border-bottom: 30px solid;
+
 }
 
 .shape.star {
@@ -144,21 +132,62 @@ h1, h2 {
     );
 }
 
-#basket {
+#baskets-container {
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     margin-top: 20px;
-    border: 2px dashed var(--black-color);
-    padding: 10px;
-    min-height: 60px;
 }
 
-.basket {
+.baskets {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     margin-top: 20px;
-    border: 2px dashed var(--black-color);
+}
+
+
+.basket {
+    border: 2px solid #000;
     padding: 10px;
-    min-height: 60px;
-    flex: 1;
+    width: 22%;
+    text-align: center;
+}
+
+.slot {
+    width: 50px;
+    height: 50px;
+    border: 1px dashed #ccc;
+    margin: 5px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.shape {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+#next-button {
+    display: none;
+    margin: 20px auto;
+    padding: 10px 20px;
+    font-size: 18px;
+    color: white;
+    background-color: var(--pink-color);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#next-button a{
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#next-button:hover {
+    background-color: var(--orange-color);
 }
