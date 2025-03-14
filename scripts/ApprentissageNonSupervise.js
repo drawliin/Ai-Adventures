@@ -175,8 +175,8 @@ let dataPoints = [
     { x: 4 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
     { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
     { x: 5 * cellSize, y: 2 * cellSize, collected: false, type: 'triangle', color: '#4aa8db	' }, // blue
-    { x: 5 * cellSize, y: 3 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 4 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#4aa8db	' }, // blue
+    { x: 4 * cellSize, y: 3 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 5 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#4aa8db	' }, // blue
     { x: 3 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#9966ff' }, // Purple
 ];
 
@@ -223,6 +223,7 @@ function drawDataPoints() {
 function displayCollectedShapes() {
     const collectedContainer = document.getElementById('collected-shapes');
     collectedContainer.innerHTML = ''; // Clear previous shapes
+
     dataPoints.forEach(point => {
         if (point.collected && !point.clicked) {
             const shapeDiv = document.createElement('div');
@@ -230,7 +231,7 @@ function displayCollectedShapes() {
             shapeDiv.style.backgroundColor = point.color;
             shapeDiv.onclick = () => {
                 if (!shapeDiv.classList.contains('clicked')) {
-                    addToBasket(point, shapeDiv);
+                    addToBasket(point, shapeDiv); // Pass the clicked shape element
                     shapeDiv.classList.add('clicked');
                 }
             };
@@ -240,63 +241,31 @@ function displayCollectedShapes() {
 }
 
 function addToBasket(point, clickedShape) {
-    // Get the selected sorting option (shape or color)
-    const sortType = document.querySelector('input[name="sort-type"]:checked').value;
-
-    // Determine the basket ID based on the sorting option
-    let basketId;
-    if (sortType === 'shape') {
-        basketId = `${point.type}-basket`; // e.g., circle-basket, square-basket
-    } else if (sortType === 'color') {
-        basketId = `${point.color.replace('#', '')}-basket`; // e.g., ffcd56-basket, ff6f61-basket
-    }
-
-    // Find the corresponding basket
-    const basket = document.getElementById(basketId);
-    if (!basket) {
-        console.error(`Basket not found: ${basketId}`);
-        return;
-    }
-
-    // Find the next available slot in the basket
-    const slots = basket.querySelectorAll('.slot');
+    // Get all baskets and their slots
+    const allBaskets = document.querySelectorAll('.basket');
     let added = false;
 
-    for (const slot of slots) {
-        if (slot.children.length === 0) { // Check if the slot is empty
-            const shapeDiv = document.createElement('div');
-            shapeDiv.classList.add('shape', point.type);
-            shapeDiv.style.backgroundColor = point.color;
-            slot.appendChild(shapeDiv);
-            added = true;
-            break;
-        }
-    }
-
-    // If no slots are available in the correct basket, find the next available slot in any basket
-    if (!added) {
-        const allBaskets = document.querySelectorAll('.basket');
-        for (const basket of allBaskets) {
-            const slots = basket.querySelectorAll('.slot');
-            for (const slot of slots) {
-                if (slot.children.length === 0) { // Check if the slot is empty
-                    const shapeDiv = document.createElement('div');
-                    shapeDiv.classList.add('shape', point.type);
-                    shapeDiv.style.backgroundColor = point.color;
-                    slot.appendChild(shapeDiv);
-                    added = true;
-                    break;
-                }
+    // Find the next available slot in any basket
+    for (const basket of allBaskets) {
+        const slots = basket.querySelectorAll('.slot');
+        for (const slot of slots) {
+            if (slot.children.length === 0) { // Check if the slot is empty
+                const shapeDiv = document.createElement('div');
+                shapeDiv.classList.add('shape', point.type);
+                shapeDiv.style.backgroundColor = point.color;
+                slot.appendChild(shapeDiv);
+                added = true;
+                break;
             }
-            if (added) break;
         }
+        if (added) break; // Stop searching once the shape is added
     }
 
     // Mark the specific clicked shape as "clicked"
     clickedShape.classList.add('clicked');
 
     // Check if all baskets are full
-    const allBasketsFull = Array.from(document.querySelectorAll('.basket')).every(basket => {
+    const allBasketsFull = Array.from(allBaskets).every(basket => {
         const slots = basket.querySelectorAll('.slot');
         return Array.from(slots).every(slot => slot.children.length > 0);
     });

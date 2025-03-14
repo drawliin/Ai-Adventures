@@ -141,14 +141,6 @@ function addToBasket(point, clickedShape) {
     }
 }
 
-function showWinAnimation(){
-    const nextButton = document.getElementById('next-button');
-    gameWinSound.play();
-    setTimeout(()=>{
-        alert("Bravoo👏👏.. Passer Vers le niveau suivant!!");
-        nextButton.style.display = 'block'; // Show the button
-    }, 1000);
-}
 
 function checkSorting() {
     const baskets = document.querySelectorAll('.basket');
@@ -176,6 +168,15 @@ function checkSorting() {
     } else {
         resetGame();
     }
+}
+
+function showWinAnimation(){
+    const nextButton = document.getElementById('next-button');
+    gameWinSound.play();
+    setTimeout(()=>{
+        alert("Bravoo👏👏.. Passer Vers le niveau suivant!!");
+        nextButton.style.display = 'block'; // Show the button
+    }, 1000);
 }
 
 function resetGame() {
