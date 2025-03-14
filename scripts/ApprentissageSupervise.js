@@ -146,6 +146,7 @@ function onCollision(){
         document.getElementById('current-task').textContent = 
             "Félicitations! Vous avez collecté toutes les données. Maintenant, triez-les par forme.";
         document.getElementById('sorting-options').style.display = 'block';
+        document.getElementById('nextButton').style.display = 'block'; // Show the "Suivant" button
     }
     displayCollectedShapes();
 }

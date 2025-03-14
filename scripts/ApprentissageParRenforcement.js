@@ -77,6 +77,7 @@ function onCollision() {
             "Félicitations! Niveau suivant: Apprentissage supervisé.";
         gameWinSound.play();
         alert("You won!");
+        document.getElementById('nextButton').style.display = 'block'; // Show the button
     }
 }
 

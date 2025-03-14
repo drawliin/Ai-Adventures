@@ -63,17 +63,13 @@ function onCollision(){
     // Vérifier si toutes les données sont collectées
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
-        
         document.getElementById('current-task').textContent = 
             "Félicitations! Vous avez collecté toutes les données. Niveau suivant: Apprentissage supervisé.";
-            gameWinSound.play();
-            alert("You won!");
-        
+        gameWinSound.play();
+        alert("You won!");
+        document.getElementById('nextButton').style.display = 'block';
     }
 }
-
-
-
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
