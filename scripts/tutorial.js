@@ -1,4 +1,4 @@
-import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player} from "../utils/script.js";
+import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision} from "../utils/script.js";
 
 let gameWinSound = new Audio('../assets/sounds/gameWin.wav');
 
@@ -72,20 +72,8 @@ function onCollision(){
     }
 }
 
-function checkPlayerEnemyCollision(player, enemies) {
-    enemies.forEach(enemy => {
-        if (Math.abs(player.x - enemy.x) < cellSize / 2 && Math.abs(player.y - enemy.y) < cellSize / 2 && !gameOver) {
-            gameOver = true;
-            gameOverSound.play();
-            alert("Game Over!");
-            document.location.reload();
-        }
-    });
-}
 
 
-let gameOver = false; 
-let gameOverSound = new Audio("../assets/sounds/gameOver.wav");
 
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
