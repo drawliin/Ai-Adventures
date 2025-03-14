@@ -6,48 +6,63 @@
   <title>Game Tutorial</title>
   <link rel="stylesheet" href="/styles/ApprentissageNonSupervise.css">
 
+  <!-- Favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon/favicon-16x16.png">
   <link rel="manifest" href="/assets/favicon/site.webmanifest">
-
 </head>
 <body>
   <div class="game-container">
+    <!-- Game Area -->
     <div class="game-area">
-        <canvas id="gameCanvas"></canvas>
-        <div id="collected-shapes"></div>
+      <canvas id="gameCanvas"></canvas>
+      <div id="collected-shapes"></div>
     </div>
     
+    <!-- Info Panel -->
     <div class="info-panel">
-        <h1>AI Adventures</h1>
+      <h1>AI Adventures</h1>
+      
+      <!-- Score Display -->
+      <div class="score-display">
+        Score: <span id="score">0</span>
+      </div>
+      
+      <!-- Instructions -->
+      <div class="instructions">
+        <h2>Instructions</h2>
+        <p id="current-task">Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.</p>
+      </div>
+      
+      <!-- Sorting Options -->
+      <div id="sorting-options">
+        <p>Trier les données par:</p>
+        <label>
+          <input type="radio" name="sort-type" value="shape" checked> Trier par forme
+        </label>
+        <label>
+          <input type="radio" name="sort-type" value="color"> Trier par couleur
+        </label>
+      </div>
+      
+      <!-- Baskets for Shapes and Colors -->
+      <div id="baskets">
+        <!-- Shape Baskets -->
+        <div id="basket-circle" class="basket"><p>Cercles</p></div>
+        <div id="basket-square" class="basket"><p>Carrés</p></div>
+        <div id="basket-triangle" class="basket"><p>Triangles</p></div>
+        <div id="basket-star" class="basket"><p>Étoiles</p></div>
         
-        <div class="score-display">
-            Score: <span id="score">0</span>
-        </div>
-        
-        <div class="instructions">
-            <h2>Instructions</h2>
-            <p id="current-task">Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.</p>
-        </div>
-        
-        <div id="sorting-options">
-            <label>
-                <input type="radio" name="sort-type" value="shape" checked> trier par forme
-            </label>
-            <label>
-                <input type="radio" name="sort-type" value="color"> trier par couleur
-            </label>
-        </div>
-        <div id="baskets" style="display: flex; justify-content: space-around;">
-            <div id="basket-circle" class="basket"></div>
-            <div id="basket-square" class="basket"></div>
-            <div id="basket-triangle" class="basket"></div>
-            <div id="basket-star" class="basket"></div>
-        </div>
+        <!-- Color Baskets -->
+        <div id="basket-yellow" class="basket"><p>Jaune</p></div>
+        <div id="basket-red" class="basket"><p>Rouge</p></div>
+        <div id="basket-purple" class="basket"><p>Violet</p></div>
+      </div>
     </div>
   </div>
   
+  <!-- JavaScript -->
   <script type="module" src="/scripts/ApprentissageNonSupervise.js"></script>
 </body>
 </html>

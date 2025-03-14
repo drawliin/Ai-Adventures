@@ -77,11 +77,15 @@ function onCollision() {
             "Félicitations! Niveau suivant: Apprentissage supervisé.";
         gameWinSound.play();
         alert("You won!");
+        player.finishedCollecting = true; // Mark that the player has finished collecting
         document.getElementById('nextButton').style.display = 'block'; // Show the button
     }
 }
 
 function checkPlayerEnemyCollision() {
+    if (dataPoints.every(p => p.collected)) {
+        return; // Player has collected all data points, no collision check needed
+    }
     enemies.forEach(enemy => {
         if (
             Math.abs(player.x - enemy.x) < cellSize / 2 &&

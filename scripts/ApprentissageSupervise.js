@@ -163,8 +163,11 @@ function gameLoop() {
         moveEnemy(enemy, maze);
     });
 
-    checkPlayerEnemyCollision(player, enemies);
-    
+    // Check if all data points are collected before checking for collisions with enemies
+    const allCollected = dataPoints.every(p => p.collected);
+    if (!allCollected) {
+        checkPlayerEnemyCollision(player, enemies);
+    }
     
     drawDataPoints();
     drawPlayer(ctx);
