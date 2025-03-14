@@ -1,15 +1,9 @@
-import { 
-    cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, 
-    moveEnemy, changeDirection, drawEnemy, player 
-} from "../utils/script.js";
-
-// Sounds
-let gameWinSound = new Audio('../assets/sounds/gameWin.wav');
-let gameOverSound = new Audio("../assets/sounds/gameOver.wav");
+import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused, gameOverSound, gameWinSound} from "../utils/script.js";
 
 // Config
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
+
 let score = 0;
 let gameOver = false;
 
@@ -17,7 +11,7 @@ canvas.width = 20 * cellSize;
 canvas.height = 17 * cellSize;
 
 // Maze (0 = Path, 1 = Wall)
-const tutorialMaze = [
+const maze = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1],
@@ -25,7 +19,7 @@ const tutorialMaze = [
     [1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
     [1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1],
     [1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 1],
     [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 0, 1],
@@ -73,44 +67,37 @@ function onCollision() {
     document.getElementById('score').textContent = score;
 
     if (dataPoints.every(p => p.collected)) {
+        const nextButton = document.getElementById('next-button');
         document.getElementById('current-task').textContent = 
             "Félicitations! Niveau suivant: Apprentissage supervisé.";
         gameWinSound.play();
-        alert("You won!");
-    }
+        setTimeout(()=>{
+            alert("Bravoo👏👏.. Passer Vers le niveau suivant!!");
+            nextButton.style.display = 'block'; // Show the button
+        }, 1000);    }
 }
 
-function checkPlayerEnemyCollision() {
-    enemies.forEach(enemy => {
-        if (
-            Math.abs(player.x - enemy.x) < cellSize / 2 &&
-            Math.abs(player.y - enemy.y) < cellSize / 2 &&
-            !gameOver
-        ) {
-            gameOver = true;
-            gameOverSound.play();
-            alert("Game Over!");
-            document.location.reload();
-        }
-    });
-}
 
 // Game loop
 function gameLoop() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     
-    movePlayer(tutorialMaze, dataPoints, onCollision);
+    movePlayer(maze, dataPoints, onCollision);
 
     enemies.forEach(enemy => {
-        changeDirection(enemy, tutorialMaze);
-        moveEnemy(enemy, tutorialMaze);
+        changeDirection(enemy, maze);
+        moveEnemy(enemy, maze);
         drawEnemy(ctx, enemy);
         console.log("Enemy position:", enemy);
     });
 
-    checkPlayerEnemyCollision();
+    // Check for collisions only if not all data points are collected
+    const allCollected = dataPoints.every(point => point.collected);
+    if (!allCollected) {
+        checkPlayerEnemyCollision(player, enemies);
+    }
 
-    drawMaze(ctx, tutorialMaze);
+    drawMaze(ctx, maze);
     drawDataPoints();
     drawPlayer(ctx);
     

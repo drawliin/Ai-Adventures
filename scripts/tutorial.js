@@ -63,11 +63,15 @@ function onCollision(){
     // Vérifier si toutes les données sont collectées
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
-        
+        const nextButton = document.getElementById('next-button');
         document.getElementById('current-task').textContent = 
             "Félicitations! Vous avez collecté toutes les données. Niveau suivant: Apprentissage supervisé.";
-            gameWinSound.play();
-            alert("You won!");
+        gameWinSound.play();
+        setTimeout(()=>{
+            alert("Bravoo👏👏.. Passer Vers le niveau suivant!!");
+            nextButton.style.display = 'block'; // Show the button
+        }, 1000);
+
         
     }
 }
@@ -86,7 +90,11 @@ function gameLoop() {
         moveEnemy(enemy, tutorialMaze);
     });
 
-    checkPlayerEnemyCollision(player, enemies);
+            // Check for collisions only if not all data points are collected
+    const allCollected = dataPoints.every(point => point.collected);
+    if (!allCollected) {
+        checkPlayerEnemyCollision(player, enemies);
+    }
     
     drawMaze(ctx, tutorialMaze);
     drawDataPoints();

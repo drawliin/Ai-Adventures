@@ -1,6 +1,5 @@
 import { cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused, gameOverSound, gameWinSound } from "../utils/script.js";
 
-let collectedOrder = []; // Tracks the order in which shapes are collected
 
 const sortingOptions = document.querySelectorAll('input[name="sort-type"]');
 const basketsContainer = document.querySelector('.baskets');
@@ -24,8 +23,8 @@ function generateBaskets(sortType) {
             basket.classList.add('basket');
             basket.id = `${shape}-basket`;
 
-            const title = document.createElement('h3');
-            title.textContent = `${shape.charAt(0).toUpperCase() + shape.slice(1)} Basket`;
+            const title = document.createElement('h4');
+            title.textContent = `${shape.charAt(0).toUpperCase() + shape.slice(1)}`;
             basket.appendChild(title);
 
             // Add slots for shapes
@@ -45,8 +44,8 @@ function generateBaskets(sortType) {
             basket.classList.add('basket');
             basket.id = `${color.replace('#', '')}-basket`;
 
-            const title = document.createElement('h3');
-            title.textContent = `Color Basket (${color})`;
+            const title = document.createElement('h4');
+            title.textContent = `(${color})`;
             basket.appendChild(title);
 
             // Add slots for colors
@@ -131,11 +130,12 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function showWinAnimation(){
-    const nextButton = document.getElementById('next-button');
     gameWinSound.play();
     setTimeout(()=>{
-        alert("Bravoo👏👏.. Passer Vers le niveau suivant!!");
-        nextButton.style.display = 'block'; // Show the button
+        alert("Félicitations! 🎉 Vous avez trié toutes les formes correctement. Vous avez gagné!");
+        setTimeout(()=>{
+            window.location.href = "../index.html";
+        }, 4000)
     }, 1000);
 }
 
@@ -151,7 +151,6 @@ function resetGame() {
             point.collected = false;
             point.clicked = false;
         });
-        collectedOrder = [];
         document.getElementById('collected-shapes').innerHTML = '';
     
         // Clear all baskets
@@ -186,23 +185,29 @@ const maze = [
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1],
     [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 canvas.width = maze[0].length * cellSize;
 canvas.height = maze.length * cellSize;
 
+// Enemies
+let enemies = [
+    createEnemy(15 * cellSize, 3 * cellSize),
+    createEnemy(13 * cellSize, 13 * cellSize)
+];
+
 // Données à collecter
 let dataPoints = [
-    { x: 2 * cellSize, y: 1 * cellSize, collected: false, type: 'circle', color: '#ffcd56' }, // Yellow
+    { x: 2 * cellSize, y: 9 * cellSize, collected: false, type: 'circle', color: '#ffcd56' }, // Yellow
     { x: 3 * cellSize, y: 1 * cellSize, collected: false, type: 'circle', color: '#ff6f61' }, // Red
-    { x: 4 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
-    { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
+    { x: 4 * cellSize, y: 13 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
+    { x: 18 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
     { x: 5 * cellSize, y: 2 * cellSize, collected: false, type: 'triangle', color: '#4aa8db	' }, // blue
-    { x: 4 * cellSize, y: 3 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 5 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#4aa8db	' }, // blue
-    { x: 3 * cellSize, y: 3 * cellSize, collected: false, type: 'star', color: '#9966ff' }, // Purple
+    { x: 13 * cellSize, y: 8 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 17 * cellSize, y: 8 * cellSize, collected: false, type: 'star', color: '#4aa8db	' }, // blue
+    { x: 18 * cellSize, y: 15 * cellSize, collected: false, type: 'star', color: '#9966ff' }, // Purple
 ];
 
 
@@ -310,7 +315,8 @@ function onCollision() {
     // Find the collected shape and mark it as collected
     const collectedShape = dataPoints.find(point => !point.collected && player.x === point.x && player.y === point.y);
     if (collectedShape) {
-        collectedShape.collected = true; // Mark the shape as collected
+        collectedShape.collected = true;
+ 
         console.log("Collected Shape:", collectedShape); // Debugging: Log collected shape
     }
 
@@ -318,7 +324,8 @@ function onCollision() {
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
         document.getElementById('current-task').textContent =
-            "Félicitations! Vous avez collecté toutes les données. Maintenant, triez-les par forme.";
+            "Félicitations! Vous avez collecté toutes les données. Choisissez comment les trier.";
+        document.getElementById('sorting-options').style.display = 'block';
     }
 
     // Update the collected shapes list
@@ -330,7 +337,18 @@ function gameLoop() {
     
     drawMaze(ctx, maze); // Ensure the maze is always drawn
     movePlayer(maze, dataPoints, onCollision);
+
+    enemies.forEach(enemy => {
+                drawEnemy(ctx, enemy);
+                changeDirection(enemy, maze);
+                moveEnemy(enemy, maze);
+    });
     
+    const allCollected = dataPoints.every(point => point.collected);
+            if (!allCollected) {
+                checkPlayerEnemyCollision(player, enemies);
+    }
+
     drawDataPoints();
     drawPlayer(ctx);
     

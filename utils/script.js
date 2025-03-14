@@ -176,14 +176,6 @@ export function drawPlayer(ctx) {
     const spriteSize = 32; // Original sprite crop size
     const displaySize = spriteSize * scale; // Final drawn size of sprite
 
-    // Calculate scaled hitbox dimensions
-    const hitboxWidthScaled = player.hitboxWidth * scale;
-    const hitboxHeightScaled = player.hitboxHeight * scale;
-
-    // Draw background rectangle for the hitbox (for debugging/visualization)
-    ctx.fillStyle = "rgba(255, 0, 0, 0.3)"; // A semi-transparent red
-    ctx.fillRect(player.x , player.y , hitboxWidthScaled, hitboxHeightScaled);
-
     // Draw the player sprite on top
     ctx.drawImage(
         spriteSheet,
@@ -302,8 +294,6 @@ export function changeDirection(enemy, maze) {
 }
 
 export function drawEnemy(ctx, enemy) {
-    ctx.fillStyle = "black"; // Change color if needed
-    ctx.fillRect(enemy.x, enemy.y, cellSize, cellSize); // Draw background
     ctx.drawImage(enemy.image, enemy.x, enemy.y, cellSize, cellSize);
 }
 

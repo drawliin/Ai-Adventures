@@ -36,13 +36,13 @@ let enemies = [
 
 // Données à collecter
 let dataPoints = [
-    { x: 2 * cellSize, y: 13 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
-    { x: 1 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ff6f61' }, // Red
-    { x: 1 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'square', color: '#9966ff' }, // Purple
-    { x: 3 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ffcd56' }, // Yellow
-    { x: 1 * cellSize, y: 4 * cellSize, collected: false, clicked: false, type: 'square', color: '#ffcd56' }, // Yellow
-    { x: 2 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 3 * cellSize, y: 2 * cellSize, collected: false, clicked: false, type: 'star', color: '#9966ff' }, // Purple
+    { x: 18 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
+    { x: 10 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ff6f61' }, // Red
+    { x: 1 * cellSize, y: 12 * cellSize, collected: false, clicked: false, type: 'square', color: '#9966ff' }, // Purple
+    { x: 16 * cellSize, y: 12 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ffcd56' }, // Yellow
+    { x: 5 * cellSize, y: 11 * cellSize, collected: false, clicked: false, type: 'square', color: '#ffcd56' }, // Yellow
+    { x: 5 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 10 * cellSize, y: 15 * cellSize, collected: false, clicked: false, type: 'star', color: '#9966ff' }, // Purple
     { x: 3 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'star', color: '#ff5994	' }, // Purple
 ];
 
