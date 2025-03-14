@@ -1,7 +1,5 @@
 import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused, gameOverSound, gameWinSound} from "../utils/script.js";
 
-// Sounds
-
 // Config
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -102,6 +100,7 @@ function displayCollectedShapes() {
                 }
             };
             collectedContainer.appendChild(shapeDiv);
+            console.log("Displayed Shape:", point); // Debugging: Log displayed shape
         }
     });
 }
@@ -207,10 +206,17 @@ function onCollision() {
     score += 10;
     document.getElementById('score').textContent = score;
 
+    // Find the collected shape and mark it as collected
+    const collectedShape = dataPoints.find(point => !point.collected && player.x === point.x && player.y === point.y);
+    if (collectedShape) {
+        collectedShape.collected = true; // Mark the shape as collected
+        console.log("Collected Shape:", collectedShape); // Debugging: Log collected shape
+    }
+
     // Check if all data points are collected
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
-        document.getElementById('current-task').textContent = 
+        document.getElementById('current-task').textContent =
             "Félicitations! Vous avez collecté toutes les données. Maintenant, triez-les par forme.";
     }
 

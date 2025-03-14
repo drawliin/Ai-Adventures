@@ -1,5 +1,7 @@
 import { cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused, gameOverSound, gameWinSound } from "../utils/script.js";
 
+let collectedOrder = []; // Tracks the order in which shapes are collected
+
 const sortingOptions = document.querySelectorAll('input[name="sort-type"]');
 const basketsContainer = document.querySelector('.baskets');
 
@@ -37,7 +39,7 @@ function generateBaskets(sortType) {
         });
     } else if (sortType === 'color') {
         // Generate baskets for colors
-        const colors = ['#ffcd56', '#ff6f61', '#9966ff', '#4aa8db']; // Yellow, Red, Purple, blue
+        const colors = ['Jaune', 'Rouge', 'Violet', 'Bleu']; // Yellow, Red, Purple, blue
         colors.forEach(color => {
             const basket = document.createElement('div');
             basket.classList.add('basket');
@@ -59,6 +61,18 @@ function generateBaskets(sortType) {
     }
 }
 
+// Helper function to convert RGB to hexadecimal
+function rgbToHex(rgb) {
+    // Extract the RGB values from the string
+    const [r, g, b] = rgb.match(/\d+/g).map(Number);
+
+    // Convert each component to a two-digit hexadecimal value
+    const toHex = (value) => value.toString(16).padStart(2, '0');
+
+    // Combine the components into a hexadecimal color string
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
 function checkSorting() {
     const baskets = document.querySelectorAll('.basket');
     let allCorrect = true;
@@ -70,7 +84,14 @@ function checkSorting() {
         if (sortType === 'shape') {
             expectedType = basket.id.replace('-basket', ''); // Get the shape type (circle, square, etc.)
         } else if (sortType === 'color') {
-            expectedType = `#${basket.id.replace('-basket', '')}`; // Get the color type (e.g., #ffcd56)
+            // Map basket IDs to their corresponding colors
+            const colorMap = {
+                'Jaune-basket': '#ffcd56', // Yellow
+                'Rouge-basket': '#ff6f61', // Red
+                'Violet-basket': '#9966ff', // Purple
+                'Bleu-basket': '#4aa8db'  // Blue
+            };
+            expectedType = colorMap[basket.id]; // Get the color based on the basket ID
         }
 
         const slots = basket.querySelectorAll('.slot');
@@ -83,7 +104,10 @@ function checkSorting() {
             if (sortType === 'shape') {
                 return shape.classList.contains(expectedType);
             } else if (sortType === 'color') {
-                return shape.style.backgroundColor === expectedType;
+                const shapeColor = shape.style.backgroundColor;
+                const shapeColorHex = rgbToHex(shapeColor); // Convert RGB to hexadecimal
+                console.log(`Basket: ${basket.id}, Expected: ${expectedType}, Actual: ${shapeColorHex}`); // Debugging: Log expected and actual colors
+                return shapeColorHex === expectedType;
             }
         });
 
@@ -127,6 +151,7 @@ function resetGame() {
             point.collected = false;
             point.clicked = false;
         });
+        collectedOrder = [];
         document.getElementById('collected-shapes').innerHTML = '';
     
         // Clear all baskets
@@ -236,6 +261,7 @@ function displayCollectedShapes() {
                 }
             };
             collectedContainer.appendChild(shapeDiv);
+            console.log("Displayed Shape:", point); // Debugging: Log displayed shape
         }
     });
 }
@@ -277,16 +303,25 @@ function addToBasket(point, clickedShape) {
 }
 
 // My onCollision Function
-function onCollision(){
+function onCollision() {
     score += 10;
     document.getElementById('score').textContent = score;
-    // Vérifier si toutes les données sont collectées
+
+    // Find the collected shape and mark it as collected
+    const collectedShape = dataPoints.find(point => !point.collected && player.x === point.x && player.y === point.y);
+    if (collectedShape) {
+        collectedShape.collected = true; // Mark the shape as collected
+        console.log("Collected Shape:", collectedShape); // Debugging: Log collected shape
+    }
+
+    // Check if all data points are collected
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
-        document.getElementById('current-task').textContent = 
-            "Félicitations! Vous avez collecté toutes les données. Choisissez comment les trier.";
-        document.getElementById('sorting-options').style.display = 'block';
+        document.getElementById('current-task').textContent =
+            "Félicitations! Vous avez collecté toutes les données. Maintenant, triez-les par forme.";
     }
+
+    // Update the collected shapes list
     displayCollectedShapes();
 }
 
