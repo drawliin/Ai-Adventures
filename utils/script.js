@@ -46,19 +46,15 @@ window.addEventListener("keydown", (event) => {
     switch(event.key) {
         case "ArrowUp":
             keys.ArrowUp = true;
-            console.log("Up key pressed");
             break;
         case "ArrowDown":
             keys.ArrowDown = true;
-            console.log("Down key pressed");
             break;
         case "ArrowLeft":
             keys.ArrowLeft = true;
-            console.log("Left key pressed");
             break;
         case "ArrowRight":
             keys.ArrowRight = true;
-            console.log("Right key pressed");
             break;
     }
 });
@@ -105,13 +101,11 @@ function checkWallCollision(x, y, maze) {
         // Ensure point is within maze bounds
         if (point.x < 0 || point.x >= maze[0].length || 
             point.y < 0 || point.y >= maze.length) {
-            console.log("Out of bounds collision:", point);
             return true; 
         }
 
         // Check if the point collides with a wall
         if (maze[point.y][point.x] === 1) {
-            console.log("Wall collision detected at:", point);
             return true;
         }
     }

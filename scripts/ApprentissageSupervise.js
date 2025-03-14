@@ -36,14 +36,14 @@ let enemies = [
 
 // Données à collecter
 let dataPoints = [
-    { x: 3 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
-    { x: 9 * cellSize, y: 12 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ff6f61' }, // Red
-    { x: 16 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'square', color: '#9966ff' }, // Purple
-    { x: 12 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ffcd56' }, // Yellow
-    { x: 1 * cellSize, y: 15 * cellSize, collected: false, clicked: false, type: 'square', color: '#ffcd56' }, // Yellow
-    { x: 5 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 18 * cellSize, y: 15 * cellSize, collected: false, clicked: false, type: 'star', color: '#9966ff' }, // Purple
-    { x: 3 * cellSize, y: 10 * cellSize, collected: false, clicked: false, type: 'star', color: '#ff5994	' }, // Purple
+    { x: 2 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
+    { x: 1 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ff6f61' }, // Red
+    { x: 1 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'square', color: '#9966ff' }, // Purple
+    { x: 3 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ffcd56' }, // Yellow
+    { x: 1 * cellSize, y: 4 * cellSize, collected: false, clicked: false, type: 'square', color: '#ffcd56' }, // Yellow
+    { x: 2 * cellSize, y: 3 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 3 * cellSize, y: 2 * cellSize, collected: false, clicked: false, type: 'star', color: '#9966ff' }, // Purple
+    { x: 3 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'star', color: '#ff5994	' }, // Purple
 ];
 
 function drawDataPoints() {
@@ -95,7 +95,7 @@ function displayCollectedShapes() {
             shapeDiv.style.backgroundColor = point.color;
             shapeDiv.onclick = () => {
                 if (!shapeDiv.classList.contains('clicked')) {
-                    addToBasket(point);
+                    addToBasket(point, shapeDiv); // Pass the clicked shape element
                     shapeDiv.classList.add('clicked');
                 }
             };
@@ -104,7 +104,7 @@ function displayCollectedShapes() {
     });
 }
 
-function addToBasket(point) {
+function addToBasket(point, clickedShape) {
     // Find the next available slot in any basket
     const baskets = document.querySelectorAll('.basket');
     let added = false;
@@ -124,15 +124,8 @@ function addToBasket(point) {
         if (added) break;
     }
 
-    // Mark the shape as "clicked" so it can't be added again
-    const collectedShapesContainer = document.getElementById('collected-shapes');
-    const collectedShapes = collectedShapesContainer.querySelectorAll('.shape');
-    for (const shape of collectedShapes) {
-        if (shape.classList.contains(point.type) && !shape.classList.contains('clicked')) {
-            shape.classList.add('clicked');
-            break;
-        }
-    }
+    // Mark the specific clicked shape as "clicked"
+    clickedShape.classList.add('clicked');
 
     // Check if all baskets are full
     const allBasketsFull = Array.from(baskets).every(basket => {
@@ -146,9 +139,16 @@ function addToBasket(point) {
     }
 }
 
+function showWinAnimation(){
+    setTimeout(()=>{
+        alert("You won!!");
+    }, 1000);
+}
+
 function checkSorting() {
     const baskets = document.querySelectorAll('.basket');
     let allCorrect = true;
+    console.log('start checking');
 
     baskets.forEach(basket => {
         const basketType = basket.id.replace('-basket', ''); // Get the basket type (circle, square, etc.)
@@ -174,24 +174,26 @@ function checkSorting() {
 }
 
 function resetGame() {
-    score = 0;
-    document.getElementById('score').textContent = score;
-    document.getElementById('current-task').textContent = 
-        "Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.";
-    dataPoints.forEach(point => {
-        point.collected = false;
-        point.clicked = false;
-    });
-    document.getElementById('collected-shapes').innerHTML = '';
-
-    // Clear all baskets
-    const baskets = document.querySelectorAll('.basket');
-    baskets.forEach(basket => {
-        const slots = basket.querySelectorAll('.slot');
-        slots.forEach(slot => slot.innerHTML = '');
-    });
-
-    gameLoop();
+    alert("You didn't Sort Correctly");
+    setTimeout(()=>{
+        score = 0;
+        document.getElementById('score').textContent = score;
+        document.getElementById('current-task').textContent = 
+            "Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.";
+        dataPoints.forEach(point => {
+            point.collected = false;
+            point.clicked = false;
+        });
+        document.getElementById('collected-shapes').innerHTML = '';
+    
+        // Clear all baskets
+        const baskets = document.querySelectorAll('.basket');
+        baskets.forEach(basket => {
+            const slots = basket.querySelectorAll('.slot');
+            slots.forEach(slot => slot.innerHTML = '');
+        });
+        gameLoop();
+    }, 1000);
 }
 
 function onCollision() {
