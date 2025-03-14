@@ -1,4 +1,4 @@
-import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision} from "../utils/script.js";
+import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision, gamePaused} from "../utils/script.js";
 
 // Config
 const canvas = document.getElementById('gameCanvas');
@@ -36,13 +36,14 @@ let enemies = [
 
 // Données à collecter
 let dataPoints = [
-    { x: 3 * cellSize, y: 5 * cellSize, collected: false, type: 'circle', color: '#ffcd56' }, // Yellow
-    { x: 9 * cellSize, y: 12 * cellSize, collected: false, type: 'circle', color: '#ff6f61' }, // Red
-    { x: 16 * cellSize, y: 1 * cellSize, collected: false, type: 'square', color: '#9966ff' }, // Purple
-    { x: 12 * cellSize, y: 5 * cellSize, collected: false, type: 'triangle', color: '#ffcd56' }, // Yellow
-    { x: 1 * cellSize, y: 15 * cellSize, collected: false, type: 'square', color: '#ffcd56' }, // Yellow
-    { x: 5 * cellSize, y: 1 * cellSize, collected: false, type: 'triangle', color: '#ff6f61' }, // Red
-    { x: 18 * cellSize, y: 15 * cellSize, collected: false, type: 'star', color: '#9966ff' } // Purple
+    { x: 3 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ffcd56' }, // Yellow
+    { x: 9 * cellSize, y: 12 * cellSize, collected: false, clicked: false, type: 'circle', color: '#ff6f61' }, // Red
+    { x: 16 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'square', color: '#9966ff' }, // Purple
+    { x: 12 * cellSize, y: 5 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ffcd56' }, // Yellow
+    { x: 1 * cellSize, y: 15 * cellSize, collected: false, clicked: false, type: 'square', color: '#ffcd56' }, // Yellow
+    { x: 5 * cellSize, y: 1 * cellSize, collected: false, clicked: false, type: 'triangle', color: '#ff6f61' }, // Red
+    { x: 18 * cellSize, y: 15 * cellSize, collected: false, clicked: false, type: 'star', color: '#9966ff' }, // Purple
+    { x: 3 * cellSize, y: 10 * cellSize, collected: false, clicked: false, type: 'star', color: '#ff5994	' }, // Purple
 ];
 
 function drawDataPoints() {
@@ -86,8 +87,9 @@ function drawDataPoints() {
 function displayCollectedShapes() {
     const collectedContainer = document.getElementById('collected-shapes');
     collectedContainer.innerHTML = ''; // Clear previous shapes
+
     dataPoints.forEach(point => {
-        if (point.collected) {
+        if (point.collected && !point.clicked) {
             const shapeDiv = document.createElement('div');
             shapeDiv.classList.add('shape', point.type);
             shapeDiv.style.backgroundColor = point.color;
@@ -103,26 +105,72 @@ function displayCollectedShapes() {
 }
 
 function addToBasket(point) {
-    const basketContainer = document.getElementById('basket');
-    const shapeDiv = document.createElement('div');
-    shapeDiv.classList.add('shape', point.type);
-    shapeDiv.style.backgroundColor = point.color;
-    basketContainer.appendChild(shapeDiv);
+    // Find the next available slot in any basket
+    const baskets = document.querySelectorAll('.basket');
+    let added = false;
 
-    // Check if all shapes are in the correct order
-    const correctOrderShape = ['circle', 'square', 'triangle', 'star'];
-    const collectedShapes = Array.from(basketContainer.children).map(div => div.classList[1]);
+    for (const basket of baskets) {
+        const slots = basket.querySelectorAll('.slot');
+        for (const slot of slots) {
+            if (slot.children.length === 0) { // Check if the slot is empty
+                const shapeDiv = document.createElement('div');
+                shapeDiv.classList.add('shape', point.type);
+                shapeDiv.style.backgroundColor = point.color;
+                slot.appendChild(shapeDiv);
+                added = true;
+                break;
+            }
+        }
+        if (added) break;
+    }
 
-    if (collectedShapes.length === correctOrderShape.length) {
-        if (JSON.stringify(collectedShapes) === JSON.stringify(correctOrderShape)) {
-            showWinAnimation();
-        } else {
-            resetGame();
+    // Mark the shape as "clicked" so it can't be added again
+    const collectedShapesContainer = document.getElementById('collected-shapes');
+    const collectedShapes = collectedShapesContainer.querySelectorAll('.shape');
+    for (const shape of collectedShapes) {
+        if (shape.classList.contains(point.type) && !shape.classList.contains('clicked')) {
+            shape.classList.add('clicked');
+            break;
         }
     }
 
-    document.getElementById('current-task').textContent = 
-        `Félicitations! Vous avez collecté toutes les données. Maintenant, triez-les par forme.`;
+    // Check if all baskets are full
+    const allBasketsFull = Array.from(baskets).every(basket => {
+        const slots = basket.querySelectorAll('.slot');
+        return Array.from(slots).every(slot => slot.children.length > 0);
+    });
+
+    // If all baskets are full, check if shapes are sorted correctly
+    if (allBasketsFull) {
+        checkSorting();
+    }
+}
+
+function checkSorting() {
+    const baskets = document.querySelectorAll('.basket');
+    let allCorrect = true;
+
+    baskets.forEach(basket => {
+        const basketType = basket.id.replace('-basket', ''); // Get the basket type (circle, square, etc.)
+        const slots = basket.querySelectorAll('.slot');
+
+        // Check if all shapes in this basket match the basket type
+        const shapesMatch = Array.from(slots).every(slot => {
+            const shape = slot.querySelector('.shape');
+            return shape && shape.classList.contains(basketType);
+        });
+
+        if (!shapesMatch) {
+            allCorrect = false;
+        }
+    });
+
+    // Show result
+    if (allCorrect) {
+        showWinAnimation();
+    } else {
+        resetGame();
+    }
 }
 
 function resetGame() {
@@ -130,44 +178,56 @@ function resetGame() {
     document.getElementById('score').textContent = score;
     document.getElementById('current-task').textContent = 
         "Utilisez les flèches du clavier pour déplacer DataBot et collecter les machins.";
-    document.getElementById('sorting-options').style.display = 'none';
-    dataPoints.forEach(point => point.collected = false);
+    dataPoints.forEach(point => {
+        point.collected = false;
+        point.clicked = false;
+    });
     document.getElementById('collected-shapes').innerHTML = '';
-    document.getElementById('basket').innerHTML = '';
+
+    // Clear all baskets
+    const baskets = document.querySelectorAll('.basket');
+    baskets.forEach(basket => {
+        const slots = basket.querySelectorAll('.slot');
+        slots.forEach(slot => slot.innerHTML = '');
+    });
+
     gameLoop();
 }
 
-function onCollision(){
+function onCollision() {
     score += 10;
     document.getElementById('score').textContent = score;
-    // Vérifier si toutes les données sont collectées
+
+    // Check if all data points are collected
     const allCollected = dataPoints.every(p => p.collected);
     if (allCollected) {
         document.getElementById('current-task').textContent = 
             "Félicitations! Vous avez collecté toutes les données. Maintenant, triez-les par forme.";
-        document.getElementById('sorting-options').style.display = 'block';
     }
+
+    // Update the collected shapes list
     displayCollectedShapes();
 }
 
+
 function gameLoop() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    drawMaze(ctx, maze); // Ensure the maze is always drawn
-    movePlayer(maze, dataPoints, onCollision);
+    if (!gamePaused) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    enemies.forEach(enemy => {
-        drawEnemy(ctx, enemy);
-        changeDirection(enemy, maze);
-        moveEnemy(enemy, maze);
-    });
+        drawMaze(ctx, maze); // Ensure the maze is always drawn
+        movePlayer(maze, dataPoints, onCollision);
 
-    checkPlayerEnemyCollision(player, enemies);
-    
-    
-    drawDataPoints();
-    drawPlayer(ctx);
-    
+        enemies.forEach(enemy => {
+            drawEnemy(ctx, enemy);
+            changeDirection(enemy, maze);
+            moveEnemy(enemy, maze);
+        });
+
+        checkPlayerEnemyCollision(player, enemies);
+        drawDataPoints();
+        drawPlayer(ctx);
+    }
+
     requestAnimationFrame(gameLoop);
 }
 

@@ -1,3 +1,4 @@
+export let gamePaused = false;
 export const MovingDirection = {
     up: 0,
     down: 1,
@@ -119,6 +120,7 @@ function checkWallCollision(x, y, maze) {
 
 // Move Player
 export function movePlayer(maze, objects, onCollision) {
+    if (gamePaused) return;
     let newX = player.x;
     let newY = player.y;
     let isMoving = false;
