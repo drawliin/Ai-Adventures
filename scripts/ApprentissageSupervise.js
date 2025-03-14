@@ -1,4 +1,4 @@
-import {cellSize, movePlayer, drawMaze, drawPlayer} from "../utils/script.js";
+import {cellSize, movePlayer, drawMaze, drawPlayer, createEnemy, moveEnemy, changeDirection, drawEnemy, player, checkPlayerEnemyCollision} from "../utils/script.js";
 
 // Config
 const canvas = document.getElementById('gameCanvas');
@@ -22,11 +22,17 @@ const maze = [
     [1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1],
     [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1],
     [1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1],
-    [1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
+    [1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 canvas.width = maze[0].length * cellSize;
 canvas.height = maze.length * cellSize;
+
+// Enemies
+let enemies = [
+    createEnemy(13 * cellSize, 9 * cellSize),
+    createEnemy(13 * cellSize, 13 * cellSize)
+];
 
 // Données à collecter
 let dataPoints = [
@@ -149,6 +155,15 @@ function gameLoop() {
     
     drawMaze(ctx, maze); // Ensure the maze is always drawn
     movePlayer(maze, dataPoints, onCollision);
+
+    enemies.forEach(enemy => {
+        drawEnemy(ctx, enemy);
+        changeDirection(enemy, maze);
+        moveEnemy(enemy, maze);
+    });
+
+    checkPlayerEnemyCollision(player, enemies);
+    
     
     drawDataPoints();
     drawPlayer(ctx);

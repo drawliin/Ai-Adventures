@@ -5,6 +5,8 @@ export const MovingDirection = {
     right: 3
 };
 
+let gameOverSound = new Audio("../assets/sounds/gameOver.wav");
+
 export const cellSize = 30;
 const scale = 1.2;
 
@@ -342,4 +344,16 @@ function didCollideWithEnvironment(enemy, maze, direction = enemy.movingDirectio
     }
 
     return false; // No collision
+}
+
+let gameOver = false;
+export function checkPlayerEnemyCollision(player, enemies) {
+    enemies.forEach(enemy => {
+        if (Math.abs(player.x - enemy.x) < cellSize / 2 && Math.abs(player.y - enemy.y) < cellSize / 2 && !gameOver) {
+            gameOver = true;
+            gameOverSound.play();
+            alert("Game Over!");
+            document.location.reload();
+        }
+    });
 }
